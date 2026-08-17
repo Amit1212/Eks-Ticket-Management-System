@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ticket-ebs-test
+  namespace: default
+spec:
+  containers:
+    - name: test
+      image: 234632868467.dkr.ecr.ap-south-1.amazonaws.com/ticket-frontend:1.1
+      command:
+        - sh
+        - -c
+        - |
+          echo "EBS storage test started"
+          echo "This file is stored on the EBS volume"
+          date > /data/test.txt
+          cat /data/test.txt
+          sleep 3600
+      volumeMounts:
+        - name: ebs-storage
+          mountPath: /data
+  volumes:
+    - name: ebs-storage
+      persistentVolumeClaim:
+        claimName: ticket-ebs-test

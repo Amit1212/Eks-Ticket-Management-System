@@ -1,0 +1,40 @@
+# .NET
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+
+# User-specific files
+*.user
+*.suo
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Application configuration containing secrets
+appsettings.Local.json
+appsettings.Production.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kubernetes local files
+*.secret.yaml
+*-secret.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+
+# Docker
+docker-compose.override.yml

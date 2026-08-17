@@ -1,0 +1,45 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: DevCluster
+  region: ap-south-1
+
+vpc:
+  id: vpc-0861dedd8347953c5
+  securityGroup: sg-0ec029bfb52687854 
+
+  subnets:
+    private:
+      ap-south-1a:
+        id: subnet-0b8e7ba56e26ceeed
+      ap-south-1b:
+        id: subnet-03a9936e6df04e283
+
+managedNodeGroups:
+  - name: ticket-private-workers
+    instanceType: t3.small
+
+    minSize: 1
+    desiredCapacity: 1
+    maxSize: 2
+
+    privateNetworking: true
+
+    subnets:
+      - subnet-0b8e7ba56e26ceeed
+      - subnet-03a9936e6df04e283
+
+    iam:
+      instanceRoleARN: arn:aws:iam::234632868467:role/AmazonEKSNodeRole
+
+    labels:
+      workload: ticket-management
+      environment: development
+
+    tags:
+      Name: DevCluster-ticket-private-worker
+      Project: TicketManagement
+
+    volumeSize: 20
+    volumeType: gp3

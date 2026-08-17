@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-frontend
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticket-frontend
+  template:
+    metadata:
+      labels:
+        app: ticket-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: 234632868467.dkr.ecr.ap-south-1.amazonaws.com/ticket-frontend:1.1
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: ApiSettings__BaseUrl
+              value: "http://ticket-backend"
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticket-frontend
+  namespace: default
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+spec:
+  type: LoadBalancer
+  selector:
+    app: ticket-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+

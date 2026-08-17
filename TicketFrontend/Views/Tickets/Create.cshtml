@@ -1,0 +1,255 @@
+@model TicketFrontend.Models.CreateTicketViewModel
+
+@{
+    ViewData["Title"] = "Create Ticket";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            Create Ticket
+        </h1>
+
+        <p class="text-muted">
+            Create a new support ticket
+        </p>
+
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <form asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger">
+                </div>
+
+                <!-- Title -->
+
+                <div class="mb-3">
+
+                    <label asp-for="Title"
+                           class="form-label fw-semibold">
+
+                        Ticket Title
+
+                    </label>
+
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="Example: Server CPU High" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <!-- Description -->
+
+                <div class="mb-3">
+
+                    <label asp-for="Description"
+                           class="form-label fw-semibold">
+
+                        Description
+
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="Describe the issue in detail">
+                    </textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="row">
+
+                    <!-- Category -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="CategoryId"
+                               class="form-label fw-semibold">
+
+                            Category
+
+                        </label>
+
+                        <select asp-for="CategoryId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Category --
+                            </option>
+
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.Id">
+                                    @category.Name
+                                </option>
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="CategoryId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Priority -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="PriorityId"
+                               class="form-label fw-semibold">
+
+                            Priority
+
+                        </label>
+
+                        <select asp-for="PriorityId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Priority --
+                            </option>
+
+                            @foreach (var priority in Model.Priorities
+                                .OrderByDescending(p => p.Level))
+                            {
+                                <option value="@priority.Id">
+
+                                    @priority.Name
+
+                                </option>
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="PriorityId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <!-- Created By -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="CreatedById"
+                               class="form-label fw-semibold">
+
+                            Created By
+
+                        </label>
+
+                        <select asp-for="CreatedById"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select User --
+                            </option>
+
+                            @foreach (var user in Model.Users)
+                            {
+                                <option value="@user.Id">
+
+                                    @user.FullName
+                                    (@user.Role)
+
+                                </option>
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="CreatedById"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Assigned To -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="AssignedToId"
+                               class="form-label fw-semibold">
+
+                            Assign To
+
+                        </label>
+
+                        <select asp-for="AssignedToId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Unassigned --
+                            </option>
+
+                            @foreach (var user in Model.Users)
+                            {
+                                <option value="@user.Id">
+
+                                    @user.FullName
+                                    (@user.Role)
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-controller="Tickets"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Create Ticket
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

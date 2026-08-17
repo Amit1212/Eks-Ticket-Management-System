@@ -1,0 +1,150 @@
+@model List<TicketFrontend.Models.TicketViewModel>
+
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold">Tickets</h1>
+
+            <p class="text-muted mb-0">
+                View and manage support tickets
+            </p>
+        </div>
+
+        <a asp-controller="Tickets"
+           asp-action="Create"
+           class="btn btn-primary">
+
+            + Create Ticket
+
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-0">
+
+            @if (!Model.Any())
+            {
+                <div class="p-5 text-center">
+
+                    <h5>No tickets found</h5>
+
+                    <p class="text-muted">
+                        Create your first ticket to get started.
+                    </p>
+
+                    <a asp-controller="Tickets"
+                       asp-action="Create"
+                       class="btn btn-primary">
+
+                        Create Ticket
+
+                    </a>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>Ticket</th>
+
+                                <th>Title</th>
+
+                                <th>Category</th>
+
+                                <th>Priority</th>
+
+                                <th>Status</th>
+
+                                <th>Assigned To</th>
+
+                                <th>Created</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        @foreach (var ticket in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        @ticket.TicketNumber
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @ticket.Title
+                                </td>
+
+                                <td>
+                                    @ticket.Category
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-warning text-dark">
+                                        @ticket.Priority
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        @ticket.Status
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @(ticket.AssignedTo ?? "Unassigned")
+                                </td>
+
+                                <td>
+                                    @ticket.CreatedDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm")
+                                </td>
+
+                                <td>
+
+                                    <a asp-controller="Tickets"
+                                       asp-action="Details"
+                                       asp-route-id="@ticket.Id"
+                                       class="btn btn-sm btn-outline-primary">
+
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

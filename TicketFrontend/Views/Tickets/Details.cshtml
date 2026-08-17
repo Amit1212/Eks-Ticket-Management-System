@@ -1,0 +1,558 @@
+@model TicketFrontend.Models.TicketDetailsViewModel
+
+@{
+    ViewData["Title"] = "Ticket Details";
+
+    var ticket = Model.Ticket;
+}
+
+<div class="container-fluid py-4">
+
+    <!-- ========================================================
+         Header
+         ======================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <div class="text-muted mb-1">
+                Ticket
+            </div>
+
+            <h1 class="fw-bold mb-1">
+                @ticket.TicketNumber
+            </h1>
+
+            <p class="text-muted mb-0">
+                @ticket.Title
+            </p>
+
+        </div>
+
+        <div>
+
+            <a asp-controller="Tickets"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                ← Back to Tickets
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================
+         Messages
+         ======================================================== -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+
+            @TempData["SuccessMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+
+            @TempData["ErrorMessage"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+    }
+
+
+    <div class="row g-4">
+
+        <!-- ====================================================
+             LEFT SIDE
+             ==================================================== -->
+
+        <div class="col-lg-8">
+
+            <!-- Ticket Information -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-0">
+                        Ticket Information
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-4">
+
+                        <label class="text-muted small">
+                            Title
+                        </label>
+
+                        <h4 class="mb-0">
+                            @ticket.Title
+                        </h4>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="text-muted small">
+                            Description
+                        </label>
+
+                        <div class="mt-2 p-3 bg-light rounded">
+
+                            @ticket.Description
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="text-muted small">
+                                Category
+                            </label>
+
+                            <div class="fw-semibold">
+                                @ticket.Category
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="text-muted small">
+                                Priority
+                            </label>
+
+                            <div>
+
+                                <span class="badge bg-warning text-dark">
+
+                                    @ticket.Priority
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="text-muted small">
+                                Status
+                            </label>
+
+                            <div>
+
+                                <span class="badge bg-secondary">
+
+                                    @ticket.Status
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Comments
+                 ================================================= -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-0">
+                        Comments
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (!Model.Comments.Any())
+                    {
+                        <div class="text-center text-muted py-4">
+
+                            No comments yet.
+
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var comment in Model.Comments)
+                        {
+                            <div class="border-bottom pb-3 mb-3">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <strong>
+                                        @comment.UserName
+                                    </strong>
+
+                                    <span class="text-muted small">
+
+                                        @(comment.CreatedDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm"))
+                                            .ToString(
+                                                "dd-MMM-yyyy HH:mm")
+
+                                    </span>
+
+                                </div>
+
+                                <div class="mt-2">
+
+                                    @comment.Comment
+
+                                </div>
+
+                            </div>
+                        }
+                    }
+
+
+                    <!-- Add Comment -->
+
+                    <hr class="my-4" />
+
+                    <h6 class="fw-bold mb-3">
+                        Add Comment
+                    </h6>
+
+                    <form asp-controller="Tickets"
+                          asp-action="AddComment"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="ticketId"
+                               value="@ticket.Id" />
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Comment By
+                            </label>
+
+                            <select name="UserId"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Select User --
+                                </option>
+
+                                @foreach (var user in Model.Users)
+                                {
+                                    <option value="@user.Id">
+
+                                        @user.FullName
+                                        (@user.Role)
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Comment
+                            </label>
+
+                            <textarea name="Comment"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Enter your comment..."></textarea>
+
+                        </div>
+
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            Add Comment
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             RIGHT SIDE
+             ==================================================== -->
+
+        <div class="col-lg-4">
+
+            <!-- Ticket Summary -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-0">
+                        Ticket Summary
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+
+                        <div class="text-muted small">
+                            Ticket Number
+                        </div>
+
+                        <div class="fw-semibold">
+                            @ticket.TicketNumber
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <div class="text-muted small">
+                            Created By
+                        </div>
+
+                        <div class="fw-semibold">
+                            @ticket.CreatedBy
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <div class="text-muted small">
+                            Assigned To
+                        </div>
+
+                        <div class="fw-semibold">
+
+                            @(ticket.AssignedTo ?? "Unassigned")
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <div class="text-muted small">
+                            Created Date
+                        </div>
+
+                        <div class="fw-semibold">
+
+                            @(ticket.CreatedDate.ToLocalTime().ToString("dd-MMM-yyyy HH:mm"))
+
+                        </div>
+
+                    </div>
+
+
+                    @if (ticket.ClosedDate.HasValue)
+                    {
+                        <div class="mb-3">
+
+                            <div class="text-muted small">
+                                Closed Date
+                            </div>
+
+                            <div class="fw-semibold">
+
+                                @ticket.ClosedDate.Value
+                                    .ToLocalTime()
+                                    .ToString(
+                                        "dd-MMM-yyyy HH:mm")
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Update Status
+                 ================================================= -->
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-0">
+                        Update Status
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-controller="Tickets"
+                          asp-action="UpdateStatus"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="ticketId"
+                               value="@ticket.Id" />
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Status
+                            </label>
+
+                            <select name="StatusId"
+                                    class="form-select">
+
+                                @foreach (var status in Model.Statuses)
+                                {
+                                    <option value="@status.Id"
+                                            selected="@(status.Id == ticket.StatusId)">
+
+                                        @status.Name
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            Update Status
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Assign Ticket
+                 ================================================= -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-0">
+                        Assign Ticket
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-controller="Tickets"
+                          asp-action="Assign"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="ticketId"
+                               value="@ticket.Id" />
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Assign To
+                            </label>
+
+                            <select name="AssignedToId"
+                                    class="form-select">
+
+                                <option value="">
+                                    -- Select User --
+                                </option>
+
+                                @foreach (var user in Model.Users)
+                                {
+                                    <option value="@user.Id"
+                                            selected="@(user.Id == ticket.AssignedToId)">
+
+                                        @user.FullName
+                                        (@user.Role)
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            Assign Ticket
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
